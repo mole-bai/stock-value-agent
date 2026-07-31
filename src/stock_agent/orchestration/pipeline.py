@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any, Iterable, Mapping
 from zoneinfo import ZoneInfo
 
+from stock_agent.assessment import AssessmentEngine, ValueScorecard
 from stock_agent.calendar import EventCalendar
 from stock_agent.connectors import (
     ConnectorError,
@@ -538,12 +539,16 @@ class StockMonitoringPipeline:
 
         valuation: ValuationReport | None = None
         recommendation: RecommendationResult | None = None
+        assessment: ValueScorecard | None = None
         data_gaps = [
             "行情源为个人原型的非官方临时数据；生产或对外分发前必须更换为持牌行情。",
             "港股财务币种换算使用配置中的静态汇率假设，并非实时外汇报价。"
             if watch.market == "HK"
             else "估值只反映当前配置假设，未纳入个人税务、流动性和组合约束。",
-            "当前仅采用盈利退出倍数模型，尚无独立估值交叉验证。",
+            (
+                "估值采用盈利退出倍数三情景模型；价值评分纳入盈利、增长、现金流、"
+                "资产负债表、资本配置、估值及风险，但尚无独立估值模型交叉验证。"
+            ),
             (
                 "公告监控按标题、稳定文档 URL 和文档 ID 做语义去噪；"
                 "单个冗余入口异常仅记入审计；所有官方入口均不可比较时才冻结建议。"
@@ -554,11 +559,13 @@ class StockMonitoringPipeline:
         if quote is not None:
             try:
                 valuation = _build_valuation(watch, financial, quote)
+                assessment = AssessmentEngine().compute(financial, valuation)
                 recommendation = self._recommend(
                     watch=watch,
                     financial=financial,
                     quote=quote,
                     valuation=valuation,
+                    assessment=assessment,
                     pending_material_event=pending_material_event,
                     checked_at=checked_at,
                 )
@@ -573,6 +580,7 @@ class StockMonitoringPipeline:
             financial=financial,
             watch=watch,
             data_gaps=data_gaps,
+            assessment=assessment,
         )
         rec_history = list(state.setdefault("recommendations", {}).get(watch.symbol, []))
         rec_history.append(
@@ -646,6 +654,7 @@ class StockMonitoringPipeline:
                     "fallback_failures": list(quote_failures),
                 },
                 "valuation": valuation.to_dict() if valuation else None,
+                "assessment": assessment.to_dict() if assessment else None,
                 "recommendation": recommendation.to_dict() if recommendation else None,
                 "official_event_semantics": semantic_audit,
             },
@@ -659,6 +668,7 @@ class StockMonitoringPipeline:
         financial: Mapping[str, Any],
         quote: Quote,
         valuation: ValuationReport,
+        assessment: ValueScorecard,
         pending_material_event: bool,
         checked_at: datetime,
     ) -> RecommendationResult:
@@ -688,16 +698,12 @@ class StockMonitoringPipeline:
         )
         valuation_config = dict(financial["valuation"])
         policy = RecommendationPolicy(
-            version="company_research_policy.personal_mvp.v1",
-            target_annual_return=_decimal(
-                valuation_config.get("minimum_buy_return", self.settings.policy.minimum_buy_return)
-            ),
+            version="company_research_policy.value_scorecard.v2",
+            target_annual_return=assessment.adjusted_target_return,
             minimum_hold_annual_return=_decimal(
                 valuation_config.get("minimum_hold_return", self.settings.policy.minimum_hold_return)
             ),
-            required_margin_of_safety=_decimal(
-                valuation_config.get("margin_of_safety", self.settings.policy.margin_of_safety)
-            ),
+            required_margin_of_safety=assessment.adjusted_margin_of_safety,
             minimum_confidence=Confidence.MEDIUM,
             require_cross_validation=False,
         )
@@ -718,7 +724,9 @@ class StockMonitoringPipeline:
             confidence=Confidence(str(financial.get("confidence", "medium"))),
             thesis_status=ThesisStatus.VALID,
             existing_position=False,
-            investment_case_qualified=True,
+            investment_case_qualified=assessment.quality_qualified,
+            composite_score=assessment.composite_score,
+            minimum_buy_score=assessment.minimum_buy_score,
             evidence=evidence,
             supporting_evidence_ids=source_ids,
             risks=watch.risks,
@@ -795,6 +803,7 @@ def _recommendation_mapping(
     financial: Mapping[str, Any],
     watch: WatchItem,
     data_gaps: list[str],
+    assessment: ValueScorecard | None,
 ) -> dict[str, Any]:
     if recommendation is None or valuation is None:
         return {
@@ -804,6 +813,7 @@ def _recommendation_mapping(
             "reasons": ["行情、估值或关键财务数据未通过质量门槛。"],
             "reason_codes": ["pipeline_incomplete"],
             "valuation": {},
+            "assessment": assessment.to_dict() if assessment else {},
             "risks": list(watch.risks),
             "invalidation": list(watch.invalidation),
             "data_gaps": data_gaps,
@@ -812,11 +822,17 @@ def _recommendation_mapping(
     action = recommendation.action.label_zh
     base = valuation.base
     reasons: list[str] = []
+    if assessment is not None:
+        reasons.append(
+            f"价值综合评分 {assessment.composite_score}/100，质量评分 "
+            f"{assessment.quality_score}/100，覆盖率 "
+            f"{(assessment.overall_coverage * 100).quantize(Decimal('0.1'))}%。"
+        )
     if base is not None and valuation.price_bands is not None:
         reasons.append(
             f"基准内在价值约 {base.intrinsic_value_per_share.quantize(Decimal('0.01'))} "
             f"{watch.currency}，建仓价上限约 "
-            f"{valuation.price_bands.entry_price_ceiling.quantize(Decimal('0.01'))} {watch.currency}。"
+            f"{recommendation.price_bands['entry_price_ceiling'].quantize(Decimal('0.01'))} {watch.currency}。"
         )
         if base.expected_annual_return is not None:
             reasons.append(
@@ -861,6 +877,7 @@ def _recommendation_mapping(
         "reasons": list(dict.fromkeys(reasons)),
         "reason_codes": reason_codes,
         "valuation": valuation_mapping,
+        "assessment": assessment.to_dict() if assessment else {},
         "risks": list(watch.risks),
         "invalidation": list(watch.invalidation),
         "valid_until": recommendation.valid_until,

@@ -99,6 +99,7 @@ function renderOverview(data) {
 
 function stockCard(stock) {
   const valuation = stock.recommendation.valuation;
+  const assessment = stock.recommendation.assessment || {};
   const currency = stock.price.currency;
   const dailyChange = number(stock.price.change_pct);
   return `
@@ -122,7 +123,7 @@ function stockCard(stock) {
       <div class="mini-stat-row">
         <div><span>安全边际</span><strong>${percent(valuation.margin_of_safety)}</strong></div>
         <div><span>预期年化</span><strong>${percent(valuation.base.expected_return)}</strong></div>
-        <div><span>信号</span><strong>${(stock.signals || []).length} 条</strong></div>
+        <div><span>综合评分</span><strong>${number(assessment.composite_score).toFixed(1)}</strong></div>
       </div>
     </article>`;
 }
@@ -153,6 +154,8 @@ function marker(label, value, min, max, kind = "") {
 
 function renderDetail(stock) {
   const valuation = stock.recommendation.valuation;
+  const assessment = stock.recommendation.assessment || {};
+  const dimensions = assessment.dimensions || [];
   const bear = number(valuation.bear.value);
   const base = number(valuation.base.value);
   const bull = number(valuation.bull.value);
@@ -209,6 +212,27 @@ function renderDetail(stock) {
         </section>
       </div>
       <aside class="stack">
+        <section class="panel scorecard-panel">
+          <div class="scorecard-head">
+            <div><span>价值综合评分</span><strong>${number(assessment.composite_score).toFixed(1)}</strong><small>/ 100</small></div>
+            <div><span>质量分</span><strong>${number(assessment.quality_score).toFixed(1)}</strong></div>
+          </div>
+          <div class="score-meta">
+            <span>覆盖率 ${percent(assessment.overall_coverage)}</span>
+            <span>风险扣分 -${number(assessment.risk_penalty).toFixed(0)}</span>
+          </div>
+          <ul class="dimension-score-list">
+            ${dimensions.map((dimension) => {
+              const value = dimension.score == null ? 50 : number(dimension.score);
+              const missing = dimension.score == null;
+              return `<li>
+                <div><span>${escapeHtml(dimension.label)}</span><strong>${missing ? "数据不足" : value.toFixed(1)}</strong></div>
+                <i><b style="--score:${Math.min(100, Math.max(0, value))}%"></b></i>
+              </li>`;
+            }).join("")}
+          </ul>
+          <p class="scorecard-note">分数用于筛选与风险约束，不代表收益概率；任何正面结论仍须同时通过数据、公告、估值与安全边际门槛。</p>
+        </section>
         <section class="panel">
           <h3>为什么是“${escapeHtml(stock.recommendation.action)}”</h3>
           <ul class="recommendation-list">${(stock.recommendation.reasons || []).map((reason) => `<li>${escapeHtml(reason)}</li>`).join("")}</ul>

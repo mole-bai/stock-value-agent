@@ -694,6 +694,88 @@ a {
   background: var(--amber);
 }
 
+.scorecard-panel {
+  background: linear-gradient(145deg, rgba(34, 56, 45, 0.06), rgba(255, 255, 255, 0.9));
+}
+
+.scorecard-head {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.scorecard-head > div {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.scorecard-head span,
+.scorecard-head small {
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+
+.scorecard-head strong {
+  display: inline-block;
+  margin: 7px 4px 0 0;
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.7rem;
+}
+
+.score-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+
+.dimension-score-list {
+  display: grid;
+  gap: 11px;
+  margin: 16px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dimension-score-list li > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 5px;
+  font-size: 0.8rem;
+}
+
+.dimension-score-list li > div span {
+  color: var(--muted);
+}
+
+.dimension-score-list li > i {
+  display: block;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(37, 52, 44, 0.1);
+}
+
+.dimension-score-list li > i b {
+  display: block;
+  width: var(--score);
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--amber), var(--green));
+}
+
+.scorecard-note {
+  color: var(--muted);
+  font-size: 0.74rem;
+  line-height: 1.55;
+}
+
 .metric-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
