@@ -1,0 +1,346 @@
+{
+  "schema_version": 1,
+  "observed_at": "2026-07-31T12:00:00+08:00",
+  "description": "Manually verified seed facts from official company/exchange reports. Values are strings to preserve decimal semantics.",
+  "stocks": {
+    "0700.HK": {
+      "name": "腾讯控股",
+      "financial_currency": "CNY",
+      "trade_currency": "HKD",
+      "latest_period": "2026-03-31",
+      "latest_period_type": "quarter",
+      "confidence": "medium",
+      "facts": {
+        "quarter_revenue": "196458000000",
+        "quarter_revenue_yoy": "0.09",
+        "quarter_gross_profit": "111265000000",
+        "quarter_gross_profit_yoy": "0.11",
+        "quarter_operating_profit": "67375000000",
+        "quarter_operating_profit_yoy": "0.17",
+        "quarter_owner_profit": "58093000000",
+        "quarter_owner_profit_yoy": "0.21",
+        "quarter_diluted_eps": "6.302",
+        "quarter_adjusted_diluted_eps": "7.364",
+        "quarter_adjusted_eps_yoy": "0.12",
+        "quarter_research_and_development": "22542000000",
+        "quarter_share_based_compensation": "6534000000",
+        "annual_2025_revenue": "751800000000",
+        "annual_2025_adjusted_owner_profit": "259626000000",
+        "annual_2025_adjusted_diluted_eps": "27.877",
+        "annual_2025_free_cash_flow": "182600000000",
+        "annual_2025_net_cash": "107100000000",
+        "annual_2025_capex": "79200000000",
+        "q1_2026_buyback_shares": "12650000",
+        "q1_2026_buyback_hkd": "7600000000",
+        "next_results_at": "2026-08-12T20:00:00+08:00"
+      },
+      "display_metrics": {
+        "营收同比": "9.0%",
+        "归母利润同比": "21.0%",
+        "经调整稀释 EPS 同比": "12.0%",
+        "2025 自由现金流": "人民币 1,826 亿元",
+        "2025 净现金": "人民币 1,071 亿元",
+        "2026Q1 回购": "1,265 万股 / 约 76 亿港元",
+        "下一业绩日": "2026-08-12 20:00（香港时间，官方日历）"
+      },
+      "signals": [
+        {
+          "severity": "positive",
+          "title": "利润增速快于收入",
+          "detail": "2026Q1 营收同比增长 9%，归母利润同比增长 21%，毛利同比增长 11%。"
+        },
+        {
+          "severity": "watch",
+          "title": "AI 投入回报需要持续验证",
+          "detail": "季度研发支出约人民币 225.42 亿元；需继续观察资本开支、云及广告增量回报。"
+        }
+      ],
+      "valuation": {
+        "model": "earnings_exit_multiple",
+        "base_earnings_per_share": "27.877",
+        "earnings_currency": "CNY",
+        "fx_to_trade_currency": "1.09",
+        "dividend_per_share_trade_currency": "5.30",
+        "horizon_years": 5,
+        "discount_rate": "0.12",
+        "margin_of_safety": "0.25",
+        "minimum_buy_return": "0.12",
+        "minimum_hold_return": "0.08",
+        "scenarios": {
+          "bear": {"growth_rate": "0.05", "exit_multiple": "16"},
+          "base": {"growth_rate": "0.10", "exit_multiple": "20"},
+          "bull": {"growth_rate": "0.14", "exit_multiple": "24"}
+        }
+      },
+      "red_flags": [],
+      "events": [
+        {
+          "title": "腾讯 2026 年第二季度及中期业绩发布（官方日历）",
+          "published_at": "2026-08-12T20:00:00+08:00",
+          "source_url": "https://www.tencent.com/en-us/investors.html"
+        },
+        {
+          "title": "7 月 9 日翌日披露报表（人工核验快照；后续变化由公告语义监控补充）",
+          "published_at": "2026-07-09T17:58:00+08:00",
+          "source_url": "https://www1.hkexnews.hk/search/titlesearch.xhtml?category=0&market=SEHK&stockId=7609"
+        }
+      ],
+      "sources": [
+        {
+          "label": "腾讯 2026 年第一季度业绩公告",
+          "url": "https://static.www.tencent.com/uploads/2026/05/13/59cf8219adbb046153f69387479350ac.pdf"
+        },
+        {
+          "label": "腾讯 2025 年全年业绩公告",
+          "url": "https://static.www.tencent.com/uploads/2026/03/18/e6a646796d0d869acc76271c9ee1a6a5.pdf"
+        }
+      ]
+    },
+    "9992.HK": {
+      "name": "泡泡玛特",
+      "financial_currency": "CNY",
+      "trade_currency": "HKD",
+      "latest_period": "2026-03-31",
+      "latest_period_type": "quarter",
+      "confidence": "medium",
+      "facts": {
+        "annual_revenue": "37120052000",
+        "annual_revenue_yoy": "1.847",
+        "annual_gross_profit": "26764916000",
+        "annual_gross_profit_yoy": "2.074",
+        "annual_operating_profit": "16890474000",
+        "annual_operating_profit_yoy": "3.066",
+        "annual_owner_profit": "12775689000",
+        "annual_owner_profit_yoy": "3.088",
+        "annual_diluted_eps": "9.58",
+        "cash_and_equivalents": "13775087000",
+        "total_assets": "32101354000",
+        "total_liabilities": "9448987000",
+        "inventory": "5472839000",
+        "inventory_prior_year": "1524521000",
+        "inventory_days": "123",
+        "inventory_days_prior_year": "102",
+        "bank_borrowings": "0",
+        "the_monsters_revenue_share": "0.381",
+        "capital_expenditure": "1171537000"
+        ,
+        "q1_2026_revenue_yoy_low": "0.75",
+        "q1_2026_revenue_yoy_high": "0.80",
+        "q1_2026_prc_revenue_yoy_low": "1.00",
+        "q1_2026_prc_revenue_yoy_high": "1.05",
+        "q1_2026_apac_revenue_yoy_low": "0.25",
+        "q1_2026_apac_revenue_yoy_high": "0.30",
+        "q1_2026_america_revenue_yoy_low": "0.55",
+        "q1_2026_america_revenue_yoy_high": "0.60",
+        "q1_2026_europe_other_revenue_yoy_low": "0.60",
+        "q1_2026_europe_other_revenue_yoy_high": "0.65",
+        "q1_2026_prc_offline_revenue_yoy_low": "0.75",
+        "q1_2026_prc_offline_revenue_yoy_high": "0.80",
+        "q1_2026_prc_online_revenue_yoy_low": "1.50",
+        "q1_2026_prc_online_revenue_yoy_high": "1.55",
+        "july_2026_awards_granted": "101935",
+        "july_2026_new_shares": "56053",
+        "july_2026_new_share_pct": "0.000042"
+      },
+      "display_metrics": {
+        "营收同比": "184.7%",
+        "归母利润同比": "308.8%",
+        "毛利率": "72.1%",
+        "经营利润率": "45.5%",
+        "现金及等价物": "人民币 137.75 亿元",
+        "存货周转天数": "123 天（上年 102 天）",
+        "THE MONSTERS 收入占比": "38.1%",
+        "2026Q1 营收同比（未经审计）": "75%–80%",
+        "2026Q1 中国线上收入同比": "150%–155%",
+        "2026Q1 美洲收入同比": "55%–60%",
+        "2026-07-20 股本变动": "新增 56,053 股（约 0.0042%）"
+      },
+      "signals": [
+        {
+          "severity": "positive",
+          "title": "2026Q1 仍保持高增长，但增速较 2025 全年回落",
+          "detail": "未经审计的 2026Q1 总收入同比增长 75%–80%；中国线上增长 150%–155%，美洲增长 55%–60%。",
+          "evidence_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0512/2026051200579.pdf"
+        },
+        {
+          "severity": "positive",
+          "title": "收入与利润高速增长",
+          "detail": "2025 年营收同比增长 184.7%，归母利润同比增长 308.8%。"
+        },
+        {
+          "severity": "watch",
+          "title": "库存与 IP 集中度上升",
+          "detail": "存货由约 15.25 亿元增至 54.73 亿元，周转天数由 102 天升至 123 天；THE MONSTERS 占收入 38.1%。"
+        },
+        {
+          "severity": "information",
+          "title": "股权激励及新增股份需累计跟踪",
+          "detail": "7 月 8 日授出 101,935 份奖励；7 月 20 日因奖励归属新增 56,053 股，单次稀释约 0.0042%，当前单次影响很小。",
+          "evidence_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0720/2026072000462.pdf"
+        }
+      ],
+      "valuation": {
+        "model": "earnings_exit_multiple",
+        "base_earnings_per_share": "9.58",
+        "earnings_currency": "CNY",
+        "fx_to_trade_currency": "1.09",
+        "dividend_per_share_trade_currency": "2.596",
+        "horizon_years": 5,
+        "discount_rate": "0.14",
+        "margin_of_safety": "0.35",
+        "minimum_buy_return": "0.15",
+        "minimum_hold_return": "0.10",
+        "scenarios": {
+          "bear": {"growth_rate": "0.00", "exit_multiple": "18"},
+          "base": {"growth_rate": "0.12", "exit_multiple": "25"},
+          "bull": {"growth_rate": "0.20", "exit_multiple": "30"}
+        }
+      },
+      "red_flags": [],
+      "events": [
+        {
+          "title": "股权奖励归属新增 56,053 股（约 0.0042%）",
+          "published_at": "2026-07-20T16:54:00+08:00",
+          "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0720/2026072000462.pdf"
+        },
+        {
+          "title": "授出 101,935 份股份奖励",
+          "published_at": "2026-07-08T19:00:00+08:00",
+          "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0708/2026070800862.pdf"
+        }
+      ],
+      "sources": [
+        {
+          "label": "泡泡玛特 2026 年第一季度业务更新",
+          "url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0512/2026051200579.pdf"
+        },
+        {
+          "label": "泡泡玛特 2025 年全年业绩公告",
+          "url": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0325/2026032500285.pdf"
+        },
+        {
+          "label": "泡泡玛特 2026-07-08 股份奖励公告",
+          "url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0708/2026070800862.pdf"
+        },
+        {
+          "label": "泡泡玛特 2026-07-20 翌日披露报表",
+          "url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0720/2026072000462.pdf"
+        }
+      ]
+    },
+    "600519.SS": {
+      "name": "贵州茅台",
+      "financial_currency": "CNY",
+      "trade_currency": "CNY",
+      "latest_period": "2026-03-31",
+      "latest_period_type": "quarter",
+      "confidence": "medium",
+      "facts": {
+        "quarter_revenue": "53909252220.51",
+        "quarter_revenue_yoy": "0.0654",
+        "quarter_owner_profit": "27242512886.45",
+        "quarter_owner_profit_yoy": "0.0147",
+        "quarter_operating_cash_flow": "26909891269.13",
+        "quarter_operating_cash_flow_yoy": "2.0548",
+        "quarter_diluted_eps": "21.76",
+        "quarter_roe": "0.1057",
+        "annual_2025_revenue": "168838102514.79",
+        "annual_2025_revenue_yoy": "-0.0121",
+        "annual_2025_owner_profit": "82320067101.68",
+        "annual_2025_owner_profit_yoy": "-0.0453",
+        "annual_2025_operating_cash_flow": "61522204989.35",
+        "annual_2025_operating_cash_flow_yoy": "-0.3346",
+        "annual_2025_diluted_eps": "65.66",
+        "annual_2025_roe": "0.3253",
+        "annual_dividend_proposal_per_share": "27.993",
+        "annual_dividend_final_per_share": "28.02423",
+        "post_buyback_shares": "1250081601",
+        "completed_buyback_shares": "2188614",
+        "completed_buyback_pct": "0.001748",
+        "completed_buyback_amount": "2999933749.57",
+        "completed_buyback_average_price": "1370.70"
+      },
+      "display_metrics": {
+        "2026Q1 营收同比": "6.54%",
+        "2026Q1 归母利润同比": "1.47%",
+        "2026Q1 经营现金流同比": "205.48%",
+        "2025 营收同比": "-1.21%",
+        "2025 归母利润同比": "-4.53%",
+        "2025 ROE": "32.53%",
+        "2025 年度已实施分红": "每股人民币 28.02423 元（含税）",
+        "2026 回购并注销": "2,188,614 股 / 约 30 亿元 / 均价 1,370.70 元"
+      },
+      "signals": [
+        {
+          "severity": "watch",
+          "title": "收入增长但利润增速明显偏慢",
+          "detail": "2026Q1 营收同比增长 6.54%，归母利润仅增长 1.47%；盈利增速仍需观察。"
+        },
+        {
+          "severity": "watch",
+          "title": "2025 年业绩与经营现金流回落",
+          "detail": "2025 年营收、归母利润和经营现金流分别同比下降 1.21%、4.53% 和 33.46%；现金流变化包含财务公司存款因素，不能只看单期数值。",
+          "evidence_url": "https://static.cninfo.com.cn/finalpage/2026-04-17/1225114741.PDF"
+        },
+        {
+          "severity": "information",
+          "title": "约 30 亿元回购股份已注销并提高每股分红",
+          "detail": "公司完成回购并注销 2,188,614 股（约 0.1748%），回购均价 1,370.70 元；2025 年度每股现金红利最终调整为 28.02423 元。",
+          "evidence_url": "https://www.moutaichina.com/mtgf/articleFileDir/2026-05/29/b2ab7fb5902b403cbf1566a367b4547c.pdf"
+        }
+      ],
+      "valuation": {
+        "model": "earnings_exit_multiple",
+        "base_earnings_per_share": "65.66",
+        "earnings_currency": "CNY",
+        "fx_to_trade_currency": "1.00",
+        "dividend_per_share_trade_currency": "28.02423",
+        "horizon_years": 5,
+        "discount_rate": "0.11",
+        "margin_of_safety": "0.20",
+        "minimum_buy_return": "0.11",
+        "minimum_hold_return": "0.07",
+        "scenarios": {
+          "bear": {"growth_rate": "0.00", "exit_multiple": "18"},
+          "base": {"growth_rate": "0.05", "exit_multiple": "22"},
+          "bull": {"growth_rate": "0.08", "exit_multiple": "25"}
+        }
+      },
+      "red_flags": [],
+      "events": [
+        {
+          "title": "2025 年度每股现金红利 28.02423 元已于 6 月 26 日实施",
+          "published_at": "2026-06-26T00:00:00+08:00",
+          "source_url": "https://www.moutaichina.com/mtgf/articleFileDir/2026-06/22/f7c1dbdf7142475d84269482757fd72d.pdf"
+        },
+        {
+          "title": "约 30 亿元股份回购完成并注销 2,188,614 股",
+          "published_at": "2026-05-28T00:00:00+08:00",
+          "source_url": "https://www.moutaichina.com/mtgf/articleFileDir/2026-05/29/b2ab7fb5902b403cbf1566a367b4547c.pdf"
+        }
+      ],
+      "sources": [
+        {
+          "label": "贵州茅台 2026 年第一季度报告",
+          "url": "https://static.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-04-25/600519_20260425_G9JL.pdf"
+        },
+        {
+          "label": "贵州茅台 2025 年年度报告",
+          "url": "https://static.cninfo.com.cn/finalpage/2026-04-17/1225114741.PDF"
+        },
+        {
+          "label": "贵州茅台 2025 年度利润分配决议",
+          "url": "https://static.cninfo.com.cn/finalpage/2026-04-17/1225114735.PDF"
+        },
+        {
+          "label": "贵州茅台 2026 年回购实施结果",
+          "url": "https://www.moutaichina.com/mtgf/articleFileDir/2026-05/29/b2ab7fb5902b403cbf1566a367b4547c.pdf"
+        },
+        {
+          "label": "贵州茅台 2025 年度权益分派实施公告",
+          "url": "https://www.moutaichina.com/mtgf/articleFileDir/2026-06/22/f7c1dbdf7142475d84269482757fd72d.pdf"
+        }
+      ]
+    }
+  }
+}

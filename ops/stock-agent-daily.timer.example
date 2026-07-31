@@ -1,0 +1,12 @@
+# Example only. This repository does not install or enable this timer.
+[Unit]
+Description=Run the personal stock value-monitoring report every day at 18:30 Asia/Shanghai
+
+[Timer]
+OnCalendar=*-*-* 18:30:00 Asia/Shanghai
+Persistent=true
+AccuracySec=1min
+Unit=stock-agent-daily.service
+
+[Install]
+WantedBy=timers.target

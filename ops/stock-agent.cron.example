@@ -1,0 +1,6 @@
+# Example only. This repository does not install or modify crontab entries.
+# Cronie honors CRON_TZ; some BSD/macOS cron versions use the host timezone.
+CRON_TZ=Asia/Shanghai
+
+# Run every day at 18:30 Asia/Shanghai. Replace every absolute path first.
+30 18 * * * cd "/ABSOLUTE/PATH/TO/agent-plan" && "/ABSOLUTE/PATH/TO/agent-plan/.venv/bin/stock-agent" live --config config/watchlist.json --fundamentals data/fundamentals.json >> "/ABSOLUTE/PATH/TO/agent-plan/var/stock-agent.log" 2>&1

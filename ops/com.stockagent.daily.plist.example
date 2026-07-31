@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.stockagent.daily</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/ABSOLUTE/PATH/TO/agent-plan/.venv/bin/stock-agent</string>
+    <string>live</string>
+    <string>--config</string>
+    <string>/ABSOLUTE/PATH/TO/agent-plan/config/watchlist.json</string>
+    <string>--fundamentals</string>
+    <string>/ABSOLUTE/PATH/TO/agent-plan/data/fundamentals.json</string>
+    <string>--events</string>
+    <string>/ABSOLUTE/PATH/TO/agent-plan/data/events.json</string>
+    <string>--output-dir</string>
+    <string>/ABSOLUTE/PATH/TO/agent-plan/reports</string>
+    <string>--state</string>
+    <string>/ABSOLUTE/PATH/TO/agent-plan/var/state.json</string>
+  </array>
+
+  <key>WorkingDirectory</key>
+  <string>/ABSOLUTE/PATH/TO/agent-plan</string>
+
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key>
+    <integer>18</integer>
+    <key>Minute</key>
+    <integer>30</integer>
+  </dict>
+
+  <key>ProcessType</key>
+  <string>Standard</string>
+  <key>RunAtLoad</key>
+  <false/>
+  <key>StandardOutPath</key>
+  <string>/ABSOLUTE/PATH/TO/agent-plan/var/launchd.stdout.log</string>
+  <key>StandardErrorPath</key>
+  <string>/ABSOLUTE/PATH/TO/agent-plan/var/launchd.stderr.log</string>
+</dict>
+</plist>

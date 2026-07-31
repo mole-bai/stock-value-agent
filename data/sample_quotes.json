@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "description": "Deterministic replay snapshot captured from the Sina personal-prototype quote endpoint on 2026-07-31. It is unofficial and must remain provisional.",
+  "quotes": {
+    "0700.HK": {
+      "price": "475.20",
+      "currency": "HKD",
+      "previous_close": "471.80",
+      "open": "470.00",
+      "high": "479.80",
+      "low": "462.00",
+      "bid": "475.00",
+      "ask": "475.20",
+      "volume": 31100240,
+      "observed_at": "2026-07-31T08:08:00+00:00",
+      "fetched_at": "2026-07-31T08:10:00+00:00",
+      "source_url": "https://hq.sinajs.cn/list=hk00700,hk09992,sh600519",
+      "provider": "sina_personal_prototype_replay",
+      "freshness": "fresh",
+      "provisional": true,
+      "raw_symbol": "hk00700"
+    },
+    "9992.HK": {
+      "price": "162.60",
+      "currency": "HKD",
+      "previous_close": "163.20",
+      "open": "161.00",
+      "high": "163.90",
+      "low": "158.10",
+      "bid": "162.50",
+      "ask": "162.60",
+      "volume": 10573360,
+      "observed_at": "2026-07-31T08:08:00+00:00",
+      "fetched_at": "2026-07-31T08:10:00+00:00",
+      "source_url": "https://hq.sinajs.cn/list=hk00700,hk09992,sh600519",
+      "provider": "sina_personal_prototype_replay",
+      "freshness": "fresh",
+      "provisional": true,
+      "raw_symbol": "hk09992"
+    },
+    "600519.SS": {
+      "price": "1350.60",
+      "currency": "CNY",
+      "previous_close": "1361.76",
+      "open": "1330.03",
+      "high": "1355.72",
+      "low": "1325.77",
+      "bid": "1350.60",
+      "ask": "1350.67",
+      "turnover": "7373462605",
+      "volume": 5512752,
+      "observed_at": "2026-07-31T07:34:59+00:00",
+      "fetched_at": "2026-07-31T08:10:00+00:00",
+      "source_url": "https://hq.sinajs.cn/list=hk00700,hk09992,sh600519",
+      "provider": "sina_personal_prototype_replay",
+      "freshness": "fresh",
+      "provisional": true,
+      "raw_symbol": "sh600519"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+# Example only. Copy and enable manually only after validation.
+[Unit]
+Description=Generate the personal stock value-monitoring daily report
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/ABSOLUTE/PATH/TO/agent-plan
+ExecStart=/ABSOLUTE/PATH/TO/agent-plan/.venv/bin/stock-agent live --config config/watchlist.json --fundamentals data/fundamentals.json
+NoNewPrivileges=true
+PrivateTmp=true

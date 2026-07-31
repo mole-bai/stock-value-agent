@@ -1,0 +1,69 @@
+name: Daily stock value monitor
+
+on:
+  schedule:
+    # GitHub cron is UTC. 10:30 UTC = 18:30 Asia/Shanghai.
+    - cron: "30 10 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-stock-value-monitor
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    name: Monitor Tencent, Pop Mart, and Moutai
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PYTHONPATH: src
+      TZ: Asia/Shanghai
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Restore monitoring state
+        uses: actions/cache@v4
+        with:
+          path: var
+          key: stock-agent-state-${{ github.run_id }}
+          restore-keys: |
+            stock-agent-state-
+
+      - name: Validate configuration and financial snapshots
+        run: python3 -m stock_agent validate
+
+      - name: Run deterministic test suite
+        run: python3 -m unittest discover -s tests
+
+      - name: Fetch live data and generate report
+        run: python3 -m stock_agent live
+
+      - name: Add the report to the Actions summary
+        if: always()
+        shell: bash
+        run: |
+          report_path="$(find reports -maxdepth 1 -type f -name 'daily-*.md' -print | sort | tail -n 1)"
+          if [[ -n "$report_path" ]]; then
+            cat "$report_path" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No daily report was generated." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Archive report files
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stock-report-${{ github.run_number }}
+          path: reports/
+          if-no-files-found: warn
+          retention-days: 90

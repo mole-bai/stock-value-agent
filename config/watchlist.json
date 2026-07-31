@@ -1,0 +1,123 @@
+{
+  "mode": "personal_research",
+  "timezone": "Asia/Shanghai",
+  "report_time": "18:30",
+  "output_dir": "reports",
+  "state_file": "var/state.json",
+  "recommendation_policy": {
+    "scope": "company_research",
+    "personalized": false,
+    "horizon_years": 5,
+    "minimum_buy_return": "0.12",
+    "minimum_hold_return": "0.08",
+    "margin_of_safety": "0.25"
+  },
+  "notifications": {
+    "enabled": true,
+    "quiet_start": "22:00",
+    "quiet_end": "08:00",
+    "bypass_through": "P0",
+    "write_markdown": true
+  },
+  "watchlist": [
+    {
+      "symbol": "0700.HK",
+      "name": "腾讯控股",
+      "market": "HK",
+      "exchange": "XHKG",
+      "currency": "HKD",
+      "timezone": "Asia/Hong_Kong",
+      "thesis": [
+        "微信生态、游戏和广告业务形成高质量现金流与网络效应",
+        "云与人工智能投入有机会提高广告、游戏和企业服务效率",
+        "净现金、投资组合和持续回购为股东回报提供缓冲"
+      ],
+      "risks": [
+        "人工智能资本开支上升但商业回报兑现慢于预期",
+        "游戏、内容和平台业务监管变化",
+        "投资组合公允价值和联营公司收益波动"
+      ],
+      "invalidation": [
+        "核心业务自由现金流连续多个报告期结构性下降",
+        "高资本投入未带来收入或利润增长且 ROIC 持续恶化",
+        "出现足以破坏微信生态或核心游戏业务的重大监管事件"
+      ],
+      "sources": [
+        {
+          "label": "腾讯投资者公告",
+          "url": "https://www.tencent.com/en-us/investors/announcements.html"
+        },
+        {
+          "label": "HKEXnews 腾讯公告",
+          "url": "https://www1.hkexnews.hk/search/titlesearch.xhtml?category=0&lang=EN&market=SEHK&stockId=7609"
+        }
+      ]
+    },
+    {
+      "symbol": "9992.HK",
+      "name": "泡泡玛特",
+      "market": "HK",
+      "exchange": "XHKG",
+      "currency": "HKD",
+      "timezone": "Asia/Hong_Kong",
+      "thesis": [
+        "自有艺术家 IP、产品设计与供应链形成潮玩平台能力",
+        "海外收入扩张拓宽长期市场空间",
+        "高毛利、净现金和较轻资产模式支持再投资"
+      ],
+      "risks": [
+        "THE MONSTERS 等头部 IP 集中度较高且消费者偏好可能快速变化",
+        "高速扩张导致库存、门店和海外执行风险上升",
+        "估值对持续高增长假设高度敏感"
+      ],
+      "invalidation": [
+        "核心自有 IP 收入连续两个报告期明显衰退且新 IP 无法接棒",
+        "库存增速持续显著高于收入并伴随现金转化恶化",
+        "海外扩张导致利润率、品牌力或资本回报持续下降"
+      ],
+      "sources": [
+        {
+          "label": "HKEXnews 泡泡玛特公告",
+          "url": "https://www1.hkexnews.hk/search/titlesearch.xhtml?category=0&lang=EN&market=SEHK&stockId=1000068054"
+        },
+        {
+          "label": "泡泡玛特投资者关系",
+          "url": "https://www.popmart.com.cn/home/investor"
+        }
+      ]
+    },
+    {
+      "symbol": "600519.SS",
+      "name": "贵州茅台",
+      "market": "CN",
+      "exchange": "XSHG",
+      "currency": "CNY",
+      "timezone": "Asia/Shanghai",
+      "thesis": [
+        "品牌、稀缺产能和渠道心智构成长期消费品护城河",
+        "高盈利能力、强资产负债表和现金分红支持长期股东回报",
+        "直销与数字化渠道有机会改善终端触达和渠道效率"
+      ],
+      "risks": [
+        "高端白酒需求、批价和渠道库存周期波动",
+        "收入和利润增速放缓且利润率承压",
+        "消费、税收、价格或行业监管政策变化"
+      ],
+      "invalidation": [
+        "核心产品批价与销量长期同步下滑并损害品牌稀缺性",
+        "ROE、自由现金流或分红能力连续多个报告期显著恶化",
+        "发生严重产品质量、治理或品牌信任事件"
+      ],
+      "sources": [
+        {
+          "label": "贵州茅台财务报告",
+          "url": "https://www.moutaichina.com/mtgf/tzzgx/cwbg/index.html"
+        },
+        {
+          "label": "上交所贵州茅台公告",
+          "url": "https://www.sse.com.cn/assortment/stock/list/info/announcement/index.shtml?productId=600519"
+        }
+      ]
+    }
+  ]
+}
