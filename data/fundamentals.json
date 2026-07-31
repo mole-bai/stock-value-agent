@@ -72,6 +72,57 @@
           "bull": {"growth_rate": "0.14", "exit_multiple": "24"}
         }
       },
+      "assessment": {
+        "minimum_quality_score": "60",
+        "minimum_buy_score": "70",
+        "minimum_coverage": "0.65",
+        "factors": [
+          {
+            "factor_id": "adjusted_profit_margin",
+            "label": "经调整利润率",
+            "dimension": "profitability",
+            "numerator_fact": "annual_2025_adjusted_owner_profit",
+            "denominator_fact": "annual_2025_revenue",
+            "bad": "0.10",
+            "good": "0.35"
+          },
+          {
+            "factor_id": "adjusted_eps_growth",
+            "label": "经调整 EPS 增长",
+            "dimension": "growth",
+            "fact": "quarter_adjusted_eps_yoy",
+            "bad": "0.00",
+            "good": "0.20"
+          },
+          {
+            "factor_id": "free_cash_flow_margin",
+            "label": "自由现金流率",
+            "dimension": "cashflow",
+            "numerator_fact": "annual_2025_free_cash_flow",
+            "denominator_fact": "annual_2025_revenue",
+            "bad": "0.05",
+            "good": "0.25"
+          },
+          {
+            "factor_id": "net_cash_to_revenue",
+            "label": "净现金／收入",
+            "dimension": "balance_sheet",
+            "numerator_fact": "annual_2025_net_cash",
+            "denominator_fact": "annual_2025_revenue",
+            "bad": "-0.10",
+            "good": "0.20"
+          },
+          {
+            "factor_id": "share_compensation_burden",
+            "label": "股权激励费用／收入",
+            "dimension": "capital_allocation",
+            "numerator_fact": "quarter_share_based_compensation",
+            "denominator_fact": "quarter_revenue",
+            "bad": "0.08",
+            "good": "0.02"
+          }
+        ]
+      },
       "red_flags": [],
       "events": [
         {
@@ -196,6 +247,73 @@
           "bull": {"growth_rate": "0.20", "exit_multiple": "30"}
         }
       },
+      "assessment": {
+        "minimum_quality_score": "60",
+        "minimum_buy_score": "72",
+        "minimum_coverage": "0.65",
+        "factors": [
+          {
+            "factor_id": "owner_profit_margin",
+            "label": "归母净利率",
+            "dimension": "profitability",
+            "numerator_fact": "annual_owner_profit",
+            "denominator_fact": "annual_revenue",
+            "bad": "0.08",
+            "good": "0.30"
+          },
+          {
+            "factor_id": "recent_revenue_growth",
+            "label": "近期收入增长",
+            "dimension": "growth",
+            "average_facts": ["q1_2026_revenue_yoy_low", "q1_2026_revenue_yoy_high"],
+            "bad": "0.00",
+            "good": "0.50"
+          },
+          {
+            "factor_id": "cash_conversion",
+            "label": "经营现金流／净利润",
+            "dimension": "cashflow",
+            "numerator_fact": "annual_operating_cash_flow",
+            "denominator_fact": "annual_owner_profit",
+            "bad": "0.50",
+            "good": "1.10"
+          },
+          {
+            "factor_id": "cash_to_assets",
+            "label": "现金／总资产",
+            "dimension": "balance_sheet",
+            "numerator_fact": "cash_and_equivalents",
+            "denominator_fact": "total_assets",
+            "bad": "0.05",
+            "good": "0.35"
+          },
+          {
+            "factor_id": "liabilities_to_assets",
+            "label": "负债／总资产",
+            "dimension": "balance_sheet",
+            "numerator_fact": "total_liabilities",
+            "denominator_fact": "total_assets",
+            "bad": "0.60",
+            "good": "0.20"
+          },
+          {
+            "factor_id": "inventory_days",
+            "label": "存货周转天数",
+            "dimension": "capital_allocation",
+            "fact": "inventory_days",
+            "bad": "180",
+            "good": "60"
+          },
+          {
+            "factor_id": "ip_concentration",
+            "label": "头部 IP 收入集中度",
+            "dimension": "capital_allocation",
+            "fact": "the_monsters_revenue_share",
+            "bad": "0.60",
+            "good": "0.20"
+          }
+        ]
+      },
       "red_flags": [],
       "events": [
         {
@@ -305,6 +423,63 @@
           "base": {"growth_rate": "0.05", "exit_multiple": "22"},
           "bull": {"growth_rate": "0.08", "exit_multiple": "25"}
         }
+      },
+      "assessment": {
+        "minimum_quality_score": "60",
+        "minimum_buy_score": "68",
+        "minimum_coverage": "0.65",
+        "factors": [
+          {
+            "factor_id": "return_on_equity",
+            "label": "净资产收益率",
+            "dimension": "profitability",
+            "fact": "annual_2025_roe",
+            "bad": "0.10",
+            "good": "0.30"
+          },
+          {
+            "factor_id": "quarter_revenue_growth",
+            "label": "季度收入增长",
+            "dimension": "growth",
+            "fact": "quarter_revenue_yoy",
+            "bad": "-0.05",
+            "good": "0.15"
+          },
+          {
+            "factor_id": "quarter_profit_growth",
+            "label": "季度利润增长",
+            "dimension": "growth",
+            "fact": "quarter_owner_profit_yoy",
+            "bad": "-0.05",
+            "good": "0.15"
+          },
+          {
+            "factor_id": "cash_conversion",
+            "label": "经营现金流／净利润",
+            "dimension": "cashflow",
+            "numerator_fact": "annual_2025_operating_cash_flow",
+            "denominator_fact": "annual_2025_owner_profit",
+            "bad": "0.50",
+            "good": "1.10"
+          },
+          {
+            "factor_id": "net_cash_strength",
+            "label": "净现金／收入",
+            "dimension": "balance_sheet",
+            "fact": "annual_2025_net_cash_to_revenue",
+            "bad": "-0.10",
+            "good": "0.20"
+          },
+          {
+            "factor_id": "dividend_payout",
+            "label": "每股分红／每股收益",
+            "dimension": "capital_allocation",
+            "numerator_fact": "annual_dividend_final_per_share",
+            "denominator_fact": "annual_2025_diluted_eps",
+            "bad": "0.10",
+            "good": "0.55"
+          }
+        ]
       },
       "red_flags": [],
       "events": [

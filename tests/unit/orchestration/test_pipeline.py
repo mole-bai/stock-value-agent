@@ -124,6 +124,13 @@ class PipelineTests(unittest.TestCase):
             )
             self.assertTrue(outcome.markdown_receipt.path.exists())
             self.assertTrue(outcome.json_receipt.path.exists())
+            self.assertTrue(
+                all(
+                    stock["recommendation"]["assessment"]["version"]
+                    == "value_scorecard.v2"
+                    for stock in outcome.result["stocks"]
+                )
+            )
             markdown = outcome.markdown_receipt.path.read_text(encoding="utf-8")
             self.assertIn("腾讯控股", markdown)
             self.assertIn("建仓价上限", markdown)

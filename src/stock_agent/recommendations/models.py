@@ -261,6 +261,8 @@ class RecommendationRequest:
     thesis_status: ThesisStatus
     existing_position: bool = False
     investment_case_qualified: bool = True
+    composite_score: Decimal | None = None
+    minimum_buy_score: Decimal = Decimal("70")
     risk_events: tuple[RiskEvent, ...] = ()
     evidence: tuple[EvidenceRef, ...] = ()
     supporting_evidence_ids: tuple[str, ...] = ()
@@ -277,6 +279,20 @@ class RecommendationRequest:
         if not isinstance(self.data_quality, DataQualityInput):
             object.__setattr__(self, "data_quality", DataQualityInput.from_dict(self.data_quality))
         object.__setattr__(self, "confidence", Confidence.parse(self.confidence))
+        object.__setattr__(
+            self,
+            "composite_score",
+            to_decimal(self.composite_score, field_name="composite_score"),
+        )
+        object.__setattr__(
+            self,
+            "minimum_buy_score",
+            to_decimal(self.minimum_buy_score, field_name="minimum_buy_score"),
+        )
+        if self.composite_score is not None and not Decimal("0") <= self.composite_score <= Decimal("100"):
+            raise ValueError("composite_score must be between 0 and 100")
+        if self.minimum_buy_score is None or not Decimal("0") <= self.minimum_buy_score <= Decimal("100"):
+            raise ValueError("minimum_buy_score must be between 0 and 100")
         if not isinstance(self.thesis_status, ThesisStatus):
             object.__setattr__(self, "thesis_status", ThesisStatus(str(self.thesis_status).lower()))
         object.__setattr__(
@@ -317,6 +333,8 @@ class RecommendationRequest:
             thesis_status=ThesisStatus(str(payload["thesis_status"]).lower()),
             existing_position=bool(payload.get("existing_position", False)),
             investment_case_qualified=bool(payload.get("investment_case_qualified", True)),
+            composite_score=payload.get("composite_score"),
+            minimum_buy_score=payload.get("minimum_buy_score", "70"),
             risk_events=tuple(payload.get("risk_events", ())),
             evidence=tuple(payload.get("evidence", ())),
             supporting_evidence_ids=tuple(payload.get("supporting_evidence_ids", ())),

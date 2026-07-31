@@ -7,6 +7,7 @@ from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import Any, Mapping
 
+from stock_agent.assessment import AssessmentEngine
 from stock_agent.connectors import Freshness, Quote, StaticQuoteProvider, WATCHLIST_BY_TICKER
 from stock_agent.metrics.models import decimal_to_str
 from stock_agent.models import AgentSettings
@@ -64,11 +65,13 @@ def analyze_price_scenario(
         output_dir=Path("reports"),
     )
     valuation = _build_valuation(watch, financial, quote)
+    assessment = AssessmentEngine().compute(financial, valuation)
     recommendation = pipeline._recommend(
         watch=watch,
         financial=financial,
         quote=quote,
         valuation=valuation,
+        assessment=assessment,
         pending_material_event=False,
         checked_at=now,
     )
@@ -81,6 +84,7 @@ def analyze_price_scenario(
             "这是用户输入价格的只读情景测算，不代表可成交价格或交易指令。",
             "情景复用当前财务快照与估值假设；未自动模拟新财报、汇率或公司行动。",
         ],
+        assessment=assessment,
     )
     return {
         "schema_version": 1,
@@ -94,6 +98,7 @@ def analyze_price_scenario(
         "recommendation": mapped,
         "audit": {
             "valuation": valuation.to_dict(),
+            "assessment": assessment.to_dict(),
             "recommendation": recommendation.to_dict(),
         },
         "disclaimer": "只读假设分析；不构成个性化投资建议，不自动交易。",

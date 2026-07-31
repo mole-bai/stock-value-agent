@@ -82,6 +82,18 @@ class RecommendationEngineTests(unittest.TestCase):
         self.assertIn("fact-fcf", result.evidence_ids)
         self.assertEqual(result.to_dict()["action_label_zh"], "买入候选")
 
+    def test_composite_score_blocks_new_exposure_without_hiding_valuation(self):
+        result = RecommendationEngine().recommend(
+            make_request(composite_score="62", minimum_buy_score="70")
+        )
+
+        self.assertIs(result.action, RecommendationAction.WAIT)
+        score_rule = next(
+            rule for rule in result.rule_trace if rule.rule_id == "minimum_composite_score"
+        )
+        self.assertFalse(score_rule.passed)
+        self.assertIsNotNone(result.scenario_values)
+
     def test_wait_hold_and_reduce_are_position_aware(self):
         cases = [
             ("130", False, RecommendationAction.WAIT),

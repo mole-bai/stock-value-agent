@@ -48,6 +48,11 @@ class DashboardPayloadTests(unittest.TestCase):
                         "risks": ["监管"],
                         "invalidation": ["现金流恶化"],
                         "valuation": {"base": {"value": "555.3"}},
+                        "assessment": {
+                            "composite_score": "78.5",
+                            "quality_score": "82.0",
+                            "dimensions": [],
+                        },
                         "data_gaps": ["internal-only"],
                     },
                     "audit": {"formula_audit": {"private": True}},
@@ -64,6 +69,10 @@ class DashboardPayloadTests(unittest.TestCase):
         self.assertNotIn("internal_id", payload["stocks"][0]["signals"][0])
         self.assertEqual(payload["stocks"][0]["name"], "腾讯控股")
         self.assertEqual(payload["stocks"][0]["recommendation"]["action"], "等待")
+        self.assertEqual(
+            payload["stocks"][0]["recommendation"]["assessment"]["composite_score"],
+            "78.5",
+        )
 
     def test_requires_stock_list(self) -> None:
         with self.assertRaises(DashboardDataError):

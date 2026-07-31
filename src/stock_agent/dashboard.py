@@ -45,6 +45,10 @@ def public_dashboard_payload(report: Mapping[str, Any]) -> dict[str, Any]:
             recommendation.get("valuation"),
             field=f"stocks[{index}].recommendation.valuation",
         )
+        assessment = _mapping(
+            recommendation.get("assessment", {}),
+            field=f"stocks[{index}].recommendation.assessment",
+        )
         public_stocks.append(
             {
                 **_pick(stock, ("symbol", "name", "market")),
@@ -82,6 +86,7 @@ def public_dashboard_payload(report: Mapping[str, Any]) -> dict[str, Any]:
                         ),
                     ),
                     "valuation": dict(valuation),
+                    "assessment": dict(assessment),
                 },
             }
         )

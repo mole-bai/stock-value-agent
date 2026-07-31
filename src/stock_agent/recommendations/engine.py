@@ -28,7 +28,7 @@ RECOMMENDATION_FORMULAS = {
     **DCF_FORMULAS,
     **{f"earnings_{key}": value for key, value in EARNINGS_EXIT_FORMULAS.items()},
     "entry_price_ceiling": "base_intrinsic_value * (1 - required_margin_of_safety)",
-    "buy_candidate": "quality_pass AND thesis_valid AND no_red_risk AND confidence>=minimum AND cross_validated AND price<=entry_ceiling AND base_return>=target_return",
+    "buy_candidate": "quality_pass AND thesis_valid AND no_red_risk AND confidence>=minimum AND cross_validated AND composite_score>=minimum_buy_score AND price<=entry_ceiling AND base_return>=target_return",
     "target_position_ceiling": "not calculated in company-level mode; requires a complete investor profile",
 }
 
@@ -133,6 +133,27 @@ class RecommendationEngine:
                 ),
                 explanation=valuation.cross_validation.explanation,
                 evidence_ids=valuation.cross_validation.evidence_ids,
+            )
+        )
+        score_passed = (
+            request.composite_score is None
+            or request.composite_score >= request.minimum_buy_score
+        )
+        trace.append(
+            RuleEvaluation(
+                rule_id="minimum_composite_score",
+                passed=score_passed,
+                actual=(
+                    decimal_to_str(request.composite_score)
+                    if request.composite_score is not None
+                    else "not supplied"
+                ),
+                threshold=decimal_to_str(request.minimum_buy_score),
+                explanation=(
+                    "the explainable quality, valuation and risk score must clear "
+                    "the new-exposure threshold"
+                ),
+                evidence_ids=request.supporting_evidence_ids,
             )
         )
 
@@ -277,7 +298,11 @@ class RecommendationEngine:
                 evidence_ids=base.evidence_ids,
             )
         )
-        if margin_passed and return_passed:
+        score_passed = (
+            request.composite_score is None
+            or request.composite_score >= request.minimum_buy_score
+        )
+        if margin_passed and return_passed and score_passed:
             return RecommendationAction.BUY_CANDIDATE, [
                 "the thesis and quality gates passed with no red hard-risk override",
                 (
@@ -287,6 +312,15 @@ class RecommendationEngine:
                 (
                     f"base annualised return {base.expected_annual_return} meets the target "
                     f"{request.policy.target_annual_return}"
+                ),
+            ]
+
+        if margin_passed and return_passed and not score_passed:
+            return RecommendationAction.WAIT, [
+                "valuation gates passed, but the composite quality and risk score is below the new-exposure threshold",
+                (
+                    f"composite score {request.composite_score} is below "
+                    f"{request.minimum_buy_score}"
                 ),
             ]
 
