@@ -38,6 +38,7 @@ from .models import (
 )
 from .static import StaticQuoteProvider
 from .sina import SINA_SYMBOLS, SinaQuoteProvider
+from .tencent import TENCENT_QUOTE_SYMBOLS, TencentQuoteProvider
 from .yahoo import YahooChartQuoteProvider
 from .page_watch import (
     HttpPageResponse,
@@ -80,6 +81,8 @@ __all__ = [
     "StaticDisclosureProvider",
     "StaticQuoteProvider",
     "TENCENT",
+    "TENCENT_QUOTE_SYMBOLS",
+    "TencentQuoteProvider",
     "Transport",
     "UnsupportedSecurityError",
     "WATCHLIST",

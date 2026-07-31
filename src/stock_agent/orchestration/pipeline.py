@@ -341,12 +341,12 @@ class StockMonitoringPipeline:
         warnings: list[str] = []
         events: list[dict[str, Any]] = list(financial.get("events", []))
         quote, quote_failures = self.quotes.get_latest(security, now=checked_at)
-        if quote_failures:
-            warnings.append(
-                f"{watch.symbol}: 部分行情源失败，已尝试降级：{' | '.join(quote_failures)}"
-            )
         if quote is None:
-            warnings.append(f"{watch.symbol}: 无可用行情，估值与正面建议被冻结。")
+            failure_detail = " | ".join(quote_failures) or "未返回有效价格"
+            warnings.append(
+                f"{watch.symbol}: 所有行情源均不可用，估值与正面建议被冻结："
+                f"{failure_detail}"
+            )
         else:
             quote = replace(
                 quote,
@@ -379,7 +379,6 @@ class StockMonitoringPipeline:
                     security, now=checked_at
                 )
                 extracted_count = 0
-                unknown_count = 0
                 semantic_state = state.setdefault("event_semantics", {})
                 scan_state = state.setdefault("event_scan_audit", {})
                 for current in snapshots:
@@ -425,11 +424,10 @@ class StockMonitoringPipeline:
                         # Only a successful semantic parse advances last-good.
                         semantic_state[current.source_id] = current.to_dict()
                     else:
-                        unknown_count += 1
-                        warnings.append(
-                            f"{watch.symbol}: {current.source_label} 未形成可比较公告列表；"
-                            "不等同于没有新公告。"
-                        )
+                        # Retain source-level degradation in the audit trail.
+                        # A redundant source must not degrade the whole stock
+                        # when another authoritative source is comparable.
+                        pass
 
                     if change.status is EventDiffStatus.CHANGED:
                         for item, update_kind in (
@@ -481,12 +479,9 @@ class StockMonitoringPipeline:
                                 f"{len(change.removed_document_ids)} 条记录从当前索引移除；"
                                 "可能是分页滚动，已留审计记录。"
                             )
-                    elif change.status is EventDiffStatus.UNKNOWN:
-                        unknown_count += 1
-
-                # One source may be a JavaScript-only portal.  We retain that as
-                # a degradation warning, but freeze the view only when no
-                # configured official source produced a comparable list.
+                # Freeze and warn only when no configured official source
+                # produced a comparable list. Individual source failures remain
+                # visible in ``official_event_semantics`` for diagnosis.
                 if snapshots and extracted_count == 0:
                     pending_material_event = True
                     warnings.append(
@@ -551,7 +546,7 @@ class StockMonitoringPipeline:
             "当前仅采用盈利退出倍数模型，尚无独立估值交叉验证。",
             (
                 "公告监控按标题、稳定文档 URL 和文档 ID 做语义去噪；"
-                "动态交易所入口可能降级，报告不会把抓取失败表述为没有公告。"
+                "单个冗余入口异常仅记入审计；所有官方入口均不可比较时才冻结建议。"
                 if self.semantic_events is not None
                 else "本次未启用公告语义监控；需人工核对官方公告入口。"
             ),
@@ -646,6 +641,10 @@ class StockMonitoringPipeline:
             "invalidation": list(watch.invalidation),
             "sources": sources,
             "audit": {
+                "quote": {
+                    "selected_provider": quote.provider if quote is not None else None,
+                    "fallback_failures": list(quote_failures),
+                },
                 "valuation": valuation.to_dict() if valuation else None,
                 "recommendation": recommendation.to_dict() if recommendation else None,
                 "official_event_semantics": semantic_audit,

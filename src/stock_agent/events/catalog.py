@@ -58,20 +58,28 @@ MOUTAI_FINANCIAL_REPORTS = OfficialEventSource(
 
 MOUTAI_SSE_ANNOUNCEMENTS = OfficialEventSource(
     ticker="600519.SS",
-    source_id="sse_moutai_announcements",
+    # Version the semantic baseline because the structured API exposes a much
+    # broader record set than the former HTML portal parser.
+    source_id="sse_moutai_announcements_api_v1",
     label="上海证券交易所—贵州茅台公告",
     url=(
-        "https://www.sse.com.cn/assortment/stock/list/info/announcement/"
-        "index.shtml?productId=600519"
+        "https://query.sse.com.cn/security/stock/queryCompanyBulletin.do?"
+        "isPagination=true&productId=600519&keyWord=&"
+        "securityType=0101%2C120100%2C020100%2C020200%2C120200&"
+        "pageHelp.pageSize=50&pageHelp.pageCount=50&pageHelp.pageNo=1&"
+        "pageHelp.beginPage=1&pageHelp.cacheSize=1&pageHelp.endPage=5"
     ),
-    kind=SourceKind.EXCHANGE_PORTAL,
+    kind=SourceKind.STRUCTURED_API,
     language="zh",
 )
 
 
 OFFICIAL_EVENT_SOURCES: dict[str, tuple[OfficialEventSource, ...]] = {
     "0700.HK": (TENCENT_IR_RESULTS, TENCENT_HKEX_ANNOUNCEMENTS),
-    "9992.HK": (POP_MART_IR, POP_MART_HKEX_ANNOUNCEMENTS),
+    # Pop Mart's IR landing page is JavaScript-only and duplicates HKEX filings.
+    # Monitor the authoritative, machine-comparable HKEX list instead of issuing
+    # a permanent parser warning for a redundant page.
+    "9992.HK": (POP_MART_HKEX_ANNOUNCEMENTS,),
     "600519.SS": (MOUTAI_FINANCIAL_REPORTS, MOUTAI_SSE_ANNOUNCEMENTS),
 }
 

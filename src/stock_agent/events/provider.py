@@ -1,4 +1,4 @@
-"""Fetch and semantically scan official announcement and IR HTML pages."""
+"""Fetch and semantically scan official announcement and IR sources."""
 
 from __future__ import annotations
 
@@ -17,6 +17,7 @@ from .models import (
     ensure_utc,
 )
 from .parser import compute_semantic_hash, parse_official_event_html
+from .sse import parse_sse_announcement_json
 
 
 Transport = Callable[[str, Mapping[str, str], float], Any]
@@ -108,9 +109,15 @@ class OfficialEventSemanticProvider:
             now or datetime.now(timezone.utc), field_name="now"
         )
         headers = {
-            "Accept": "text/html,application/xhtml+xml;q=0.9,*/*;q=0.5",
+            "Accept": (
+                "application/json,*/*;q=0.5"
+                if source.kind is SourceKind.STRUCTURED_API
+                else "text/html,application/xhtml+xml;q=0.9,*/*;q=0.5"
+            ),
             "User-Agent": self._user_agent,
         }
+        if source.kind is SourceKind.STRUCTURED_API:
+            headers["Referer"] = "https://www.sse.com.cn/"
         try:
             response = self._transport(source.url, headers, self._timeout)
             body, response_headers, status, final_url = _response_parts(
@@ -132,12 +139,15 @@ class OfficialEventSemanticProvider:
                     source_url=final_url,
                     message="官方页面超过大小上限；无法判断是否有新增公告。",
                 )
-            html = _decode_html(body, response_headers)
-            events = parse_official_event_html(
-                html,
-                source=source,
-                base_url=final_url,
-            )
+            if source.kind is SourceKind.STRUCTURED_API:
+                events = parse_sse_announcement_json(body, source=source)
+            else:
+                html = _decode_html(body, response_headers)
+                events = parse_official_event_html(
+                    html,
+                    source=source,
+                    base_url=final_url,
+                )
         except Exception as exc:  # transport/parser boundary: degrade, never infer empty
             return self._degraded(
                 source,
@@ -166,7 +176,7 @@ class OfficialEventSemanticProvider:
                 observed_at=checked_at,
                 fetched_at=checked_at,
                 message=(
-                    "未从官方 HTML 提取到可核验的公告列表；页面可能依赖 JavaScript/API。"
+                    "未从官方来源提取到可核验的公告列表；页面可能依赖 JavaScript/API。"
                     "空提取结果不表示没有公告。"
                 ),
                 provisional=True,
@@ -183,7 +193,7 @@ class OfficialEventSemanticProvider:
             observed_at=checked_at,
             fetched_at=checked_at,
             message=(
-                f"从官方页面提取 {len(events)} 条可识别记录；"
+                f"从官方来源提取 {len(events)} 条可识别记录；"
                 "语义监控不承诺覆盖该发行人的全部公告。"
             ),
             provisional=True,

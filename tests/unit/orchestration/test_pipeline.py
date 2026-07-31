@@ -83,17 +83,30 @@ class ChangingSemanticEventProvider:
         )
 
 
+class FailingQuoteProvider:
+    provider_name = "fixture_failing_quote"
+
+    def get_latest(self, _security, *, now=None):
+        raise OSError("temporary fixture failure")
+
+
 class PipelineTests(unittest.TestCase):
     def setUp(self):
         self.settings = load_settings(ROOT / "config/watchlist.json")
         self.fundamentals = load_fundamentals(ROOT / "data/fundamentals.json")
         self.quotes = load_static_quote_provider(ROOT / "data/sample_quotes.json")
 
-    def _pipeline(self, directory, page_provider=None, semantic_provider=None):
+    def _pipeline(
+        self,
+        directory,
+        page_provider=None,
+        semantic_provider=None,
+        quote_providers=None,
+    ):
         return StockMonitoringPipeline(
             settings=self.settings,
             fundamentals=self.fundamentals,
-            quote_providers=[self.quotes],
+            quote_providers=quote_providers or [self.quotes],
             state_store=JsonStateStore(Path(directory) / "state.json"),
             output_dir=Path(directory) / "reports",
             official_page_provider=page_provider,
@@ -139,6 +152,23 @@ class PipelineTests(unittest.TestCase):
             self.assertTrue(
                 all(stock["recommendation"]["action"] == "无建议" for stock in outcome.result["stocks"])
             )
+
+    def test_successful_quote_fallback_is_audit_detail_not_top_level_warning(self):
+        with tempfile.TemporaryDirectory() as directory:
+            outcome = self._pipeline(
+                directory,
+                quote_providers=[FailingQuoteProvider(), self.quotes],
+            ).run(now=RUN_TIME)
+
+            self.assertEqual(outcome.result["status"], "success")
+            self.assertEqual(outcome.result["warnings"], [])
+            for stock in outcome.result["stocks"]:
+                quote_audit = stock["audit"]["quote"]
+                self.assertEqual(
+                    quote_audit["selected_provider"],
+                    "sina_personal_prototype_replay",
+                )
+                self.assertIn("fixture_failing_quote", quote_audit["fallback_failures"][0])
 
     def test_semantic_baseline_is_quiet_then_new_document_enters_review_queue(self):
         with tempfile.TemporaryDirectory() as directory:
