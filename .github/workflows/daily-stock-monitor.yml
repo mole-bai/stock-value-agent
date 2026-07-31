@@ -60,7 +60,7 @@ jobs:
             echo "No JSON report was generated." >&2
             exit 1
           fi
-          cp "$report_json" site/data/latest.json
+          python3 -m stock_agent.dashboard "$report_json" site/data/latest.json
 
       - name: Add the report to the Actions summary
         if: always()
@@ -82,27 +82,31 @@ jobs:
           if-no-files-found: warn
           retention-days: 90
 
-      - name: Package dashboard for GitHub Pages
+      - name: Publish dashboard to public site repository
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: site
-
-  deploy:
-    name: Publish online dashboard
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-    needs: monitor
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@v5
-
-      - name: Deploy dashboard
-        id: deployment
-        uses: actions/deploy-pages@v4
+        shell: bash
+        env:
+          DASHBOARD_DEPLOY_KEY: ${{ secrets.DASHBOARD_DEPLOY_KEY }}
+        run: |
+          if [[ -z "$DASHBOARD_DEPLOY_KEY" ]]; then
+            echo "DASHBOARD_DEPLOY_KEY is not configured." >&2
+            exit 1
+          fi
+          install -m 700 -d "$HOME/.ssh"
+          printf '%s\n' "$DASHBOARD_DEPLOY_KEY" > "$HOME/.ssh/id_ed25519"
+          chmod 600 "$HOME/.ssh/id_ed25519"
+          ssh-keyscan -H github.com >> "$HOME/.ssh/known_hosts"
+          deploy_dir="$(mktemp -d)"
+          export GIT_SSH_COMMAND="ssh -i $HOME/.ssh/id_ed25519 -o IdentitiesOnly=yes"
+          git clone --depth 1 --branch gh-pages \
+            git@github.com:mole-bai/stock-value-dashboard.git "$deploy_dir"
+          rsync -a --delete --exclude='.git/' site/ "$deploy_dir/"
+          git -C "$deploy_dir" config user.name "github-actions[bot]"
+          git -C "$deploy_dir" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C "$deploy_dir" add -A
+          if git -C "$deploy_dir" diff --cached --quiet; then
+            echo "Dashboard is already current."
+            exit 0
+          fi
+          git -C "$deploy_dir" commit -m "Update dashboard from run ${GITHUB_RUN_NUMBER}"
+          git -C "$deploy_dir" push origin gh-pages

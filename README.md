@@ -160,7 +160,7 @@ stock-agent scenario 0700.HK --price 400
 
 仓库也提供 [`.github/workflows/daily-stock-monitor.yml`](.github/workflows/daily-stock-monitor.yml)：推送到 GitHub 后，Actions 会在每天北京时间 `18:30` 自动校验配置、运行测试并执行 `live`，也支持在 Actions 页面手工触发。日报会显示在单次任务的 Summary，并作为私有 Actions artifact 保存 90 天；`var/` 通过 Actions cache 延续公告基线、历史比较和通知去重状态。工作流使用公开原型数据源，不需要仓库 Secret；若未来接入付费行情、邮件或消息服务，应仅通过 GitHub Actions Secrets 注入凭据，不能提交到仓库。
 
-同一工作流还会把最新 JSON 日报注入 [`site/`](site/) 的响应式仪表盘并部署到 GitHub Pages。页面提供三只股票的价格、建议、三情景估值、安全边际、预期回报、关键财务指标、风险信号与未来事件；只在 `main` 分支运行成功后更新线上版本，失败或降级信息会原样显示，不会沿用一份看似正常的新页面掩盖数据问题。
+同一工作流还会把最新 JSON 日报裁剪为不含本地路径、通知记录和完整审计字段的公开数据，注入 [`site/`](site/) 的响应式仪表盘，再通过仓库专用部署密钥发布到独立公共站点仓库 `mole-bai/stock-value-dashboard`。页面提供三只股票的价格、建议、三情景估值、安全边际、预期回报、关键财务指标、风险信号与未来事件；只在 `main` 分支运行成功后更新线上版本，失败或降级信息会原样显示，不会沿用一份看似正常的新页面掩盖数据问题。Agent 源码、运行状态、通知记录和完整审计数据仍保留在私有仓库。
 
 当前这台 Mac 已额外安装并实测 `com.stockagent.daily` LaunchAgent：每天本地时间 18:30 运行，运行副本及状态位于 `~/Library/Application Support/StockAgent/`。之所以不直接从本项目的 `Documents` 路径运行，是为了遵守 macOS 对无界面后台任务的文件隐私限制。定时日报写入 `~/Library/Application Support/StockAgent/reports/`，日志写入同目录下的 `var/`；手工运行仍默认写入本项目的 `reports/`。
 
