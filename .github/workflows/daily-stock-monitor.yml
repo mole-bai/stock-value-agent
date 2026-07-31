@@ -1,6 +1,10 @@
 name: Daily stock value monitor
 
 on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
   schedule:
     # GitHub cron is UTC. 10:30 UTC = 18:30 Asia/Shanghai.
     - cron: "30 10 * * *"
@@ -10,7 +14,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: daily-stock-value-monitor
+  group: daily-stock-value-monitor-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -48,6 +52,16 @@ jobs:
       - name: Fetch live data and generate report
         run: python3 -m stock_agent live
 
+      - name: Prepare dashboard data
+        shell: bash
+        run: |
+          report_json="$(find reports -maxdepth 1 -type f -name 'daily-*.json' -print | sort | tail -n 1)"
+          if [[ -z "$report_json" ]]; then
+            echo "No JSON report was generated." >&2
+            exit 1
+          fi
+          cp "$report_json" site/data/latest.json
+
       - name: Add the report to the Actions summary
         if: always()
         shell: bash
@@ -67,3 +81,28 @@ jobs:
           path: reports/
           if-no-files-found: warn
           retention-days: 90
+
+      - name: Package dashboard for GitHub Pages
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    name: Publish online dashboard
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: monitor
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Deploy dashboard
+        id: deployment
+        uses: actions/deploy-pages@v4

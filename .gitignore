@@ -11,3 +11,4 @@ reports/*.json
 reports/*.ics
 reports/notifications/
 ops/com.stockagent.daily.plist
+site/data/latest.json
