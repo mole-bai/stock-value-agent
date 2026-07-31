@@ -20,6 +20,7 @@ from .parser import (
     parse_official_event_html,
 )
 from .provider import OfficialEventSemanticProvider
+from .sse import parse_sse_announcement_json
 
 __all__ = [
     "PARSER_VERSION",
@@ -38,5 +39,6 @@ __all__ = [
     "extract_date",
     "normalize_text",
     "parse_official_event_html",
+    "parse_sse_announcement_json",
     "sources_for",
 ]

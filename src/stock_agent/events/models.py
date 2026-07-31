@@ -19,10 +19,11 @@ PARSER_VERSION = "official_events.v1"
 
 
 class SourceKind(str, Enum):
-    """The coverage role of an official HTML source."""
+    """The coverage role and response contract of an official source."""
 
     IR_INDEX = "ir_index"
     EXCHANGE_PORTAL = "exchange_portal"
+    STRUCTURED_API = "structured_api"
 
 
 class EventScanStatus(str, Enum):
@@ -56,7 +57,7 @@ def _validate_http_url(value: str, *, field_name: str) -> None:
 
 @dataclass(frozen=True, slots=True)
 class OfficialEventSource:
-    """One authoritative HTML index monitored for an issuer."""
+    """One authoritative announcement source monitored for an issuer."""
 
     ticker: str
     source_id: str
@@ -116,7 +117,7 @@ class OfficialEvent:
 
 @dataclass(frozen=True, slots=True)
 class SemanticEventSnapshot:
-    """Normalized view of one official HTML index at a point in time.
+    """Normalized view of one official event source at a point in time.
 
     ``EXTRACTED`` means recognizable records were found.  It does not promise
     that the source exposes every issuer announcement, so ``coverage_complete``

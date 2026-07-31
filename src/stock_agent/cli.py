@@ -14,6 +14,7 @@ from stock_agent.config import ConfigError, load_fundamentals, load_settings
 from stock_agent.connectors import (
     CurlTransport,
     SinaQuoteProvider,
+    TencentQuoteProvider,
     YahooChartQuoteProvider,
 )
 from stock_agent.events import OfficialEventSemanticProvider
@@ -344,8 +345,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         else:
             transport = CurlTransport()
             providers = [
-                SinaQuoteProvider(transport=transport),
+                TencentQuoteProvider(transport=transport),
                 YahooChartQuoteProvider(http_get=transport),
+                SinaQuoteProvider(transport=transport),
             ]
             official_pages = None
             semantic_events = (

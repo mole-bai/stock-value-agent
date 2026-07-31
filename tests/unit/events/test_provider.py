@@ -29,6 +29,13 @@ PORTAL_SOURCE = OfficialEventSource(
     url="https://exchange.example/search",
     kind=SourceKind.EXCHANGE_PORTAL,
 )
+SSE_API_SOURCE = OfficialEventSource(
+    ticker="600519.SS",
+    source_id="fixture_sse_api",
+    label="Fixture SSE API",
+    url="https://query.sse.com.cn/security/stock/queryCompanyBulletin.do?productId=600519",
+    kind=SourceKind.STRUCTURED_API,
+)
 
 
 class OfficialEventProviderTests(unittest.TestCase):
@@ -111,13 +118,53 @@ class OfficialEventProviderTests(unittest.TestCase):
         self.assertEqual(snapshot.status, EventScanStatus.DEGRADED)
         self.assertIn("HTTP 503", snapshot.message)
 
-    def test_catalog_covers_each_requested_ticker_with_ir_and_exchange_sources(self) -> None:
-        self.assertEqual(set(OFFICIAL_EVENT_SOURCES), {"0700.HK", "9992.HK", "600519.SS"})
-        for sources in OFFICIAL_EVENT_SOURCES.values():
-            self.assertEqual(
-                {source.kind for source in sources},
-                {SourceKind.IR_INDEX, SourceKind.EXCHANGE_PORTAL},
+    def test_extracts_sse_structured_announcement_records(self) -> None:
+        seen_headers: dict[str, str] = {}
+
+        def transport(_url: str, headers: dict[str, str], _timeout: float) -> bytes:
+            seen_headers.update(headers)
+            return (
+                b'{"pageHelp":{"data":[{'
+                b'"SSEDATE":"2026-07-18",'
+                b'"TITLE":"Kweichow Moutai Material Announcement",'
+                b'"URL":"/disclosure/listedinfo/announcement/c/new/2026-07-18/'
+                b'600519_20260718_P95R.pdf"}]}}'
             )
+
+        provider = OfficialEventSemanticProvider(
+            {"600519.SS": (SSE_API_SOURCE,)}, transport=transport
+        )
+        security = SimpleNamespace(ticker="600519.SS")
+        snapshot = provider.scan_security(security, now=NOW)[0]
+
+        self.assertEqual(snapshot.status, EventScanStatus.EXTRACTED)
+        self.assertEqual(snapshot.events[0].document_id, "600519_20260718_P95R")
+        self.assertEqual(
+            snapshot.events[0].document_url,
+            "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/"
+            "2026-07-18/600519_20260718_P95R.pdf",
+        )
+        self.assertEqual(seen_headers["Referer"], "https://www.sse.com.cn/")
+        self.assertIn("application/json", seen_headers["Accept"])
+
+    def test_catalog_uses_comparable_authoritative_sources_for_each_ticker(self) -> None:
+        self.assertEqual(set(OFFICIAL_EVENT_SOURCES), {"0700.HK", "9992.HK", "600519.SS"})
+        self.assertEqual(
+            {source.kind for source in OFFICIAL_EVENT_SOURCES["0700.HK"]},
+            {SourceKind.IR_INDEX, SourceKind.EXCHANGE_PORTAL},
+        )
+        self.assertEqual(
+            {source.kind for source in OFFICIAL_EVENT_SOURCES["9992.HK"]},
+            {SourceKind.EXCHANGE_PORTAL},
+        )
+        self.assertEqual(
+            {source.kind for source in OFFICIAL_EVENT_SOURCES["600519.SS"]},
+            {SourceKind.IR_INDEX, SourceKind.STRUCTURED_API},
+        )
+        self.assertIn(
+            "api_v1",
+            OFFICIAL_EVENT_SOURCES["600519.SS"][1].source_id,
+        )
 
     def test_unsupported_security_is_explicit(self) -> None:
         provider = OfficialEventSemanticProvider(transport=lambda *_: b"")
