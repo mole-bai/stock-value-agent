@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#173b35" />
+    <meta
+      name="description"
+      content="腾讯、泡泡玛特和贵州茅台的每日价值投资监控仪表盘。"
+    />
+    <title>价值雷达 · 每日投资监控</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header class="hero">
+      <nav class="topbar shell" aria-label="主导航">
+        <a class="brand" href="#top" aria-label="价值雷达首页">
+          <span class="brand-mark" aria-hidden="true">值</span>
+          <span>
+            <strong>价值雷达</strong>
+            <small>VALUE RADAR</small>
+          </span>
+        </a>
+        <div class="top-actions">
+          <span class="live-pill"><i></i> 每日更新</span>
+          <a class="repo-link" href="https://github.com/mole-bai/stock-value-agent" target="_blank" rel="noreferrer">查看项目 ↗</a>
+        </div>
+      </nav>
+
+      <div class="hero-content shell" id="top">
+        <div class="hero-copy">
+          <p class="eyebrow">EVIDENCE OVER NOISE</p>
+          <h1>少看噪音，<br />盯住价值。</h1>
+          <p class="hero-intro">把价格、财务质量、官方公告与三情景估值放在同一个决策界面里。</p>
+          <div class="hero-meta">
+            <span id="run-status" class="status-pill loading">正在读取数据</span>
+            <span id="updated-at">—</span>
+          </div>
+        </div>
+        <div class="hero-stats" aria-label="监控概览">
+          <article>
+            <span>监控公司</span>
+            <strong id="company-count">3</strong>
+            <small>腾讯 · 泡泡玛特 · 茅台</small>
+          </article>
+          <article>
+            <span>风险信号</span>
+            <strong id="risk-count">—</strong>
+            <small>黄色及以上</small>
+          </article>
+          <article>
+            <span>未来事件</span>
+            <strong id="event-count">—</strong>
+            <small>未来 30 天</small>
+          </article>
+        </div>
+      </div>
+    </header>
+
+    <main class="shell dashboard">
+      <section id="warning-panel" class="warning-panel" hidden aria-live="polite"></section>
+
+      <section class="section-block" aria-labelledby="watchlist-title">
+        <div class="section-heading">
+          <div>
+            <p class="kicker">WATCHLIST</p>
+            <h2 id="watchlist-title">今日监控</h2>
+          </div>
+          <p>点击公司查看估值区间、财务信号与风险清单。</p>
+        </div>
+        <div id="stock-tabs" class="stock-tabs" role="tablist" aria-label="选择公司"></div>
+        <div id="stock-cards" class="stock-grid" aria-live="polite">
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+        </div>
+      </section>
+
+      <section id="stock-detail" class="detail-shell" aria-live="polite"></section>
+
+      <section class="section-block" aria-labelledby="events-title">
+        <div class="section-heading">
+          <div>
+            <p class="kicker">CALENDAR</p>
+            <h2 id="events-title">关键日历</h2>
+          </div>
+          <p>官方确认与模型推测严格分开。</p>
+        </div>
+        <div id="event-list" class="event-list"></div>
+      </section>
+
+      <section class="method-note">
+        <div>
+          <p class="kicker">HOW TO READ</p>
+          <h2>这是研究仪表盘，不是交易按钮。</h2>
+        </div>
+        <p>页面建议基于公司级价值研究规则，未纳入你的资产规模、税务、流动性或风险承受能力。行情来自个人原型接口，可能延迟或降级；作出决定前请回到原始公告核验。</p>
+      </section>
+    </main>
+
+    <footer class="footer shell">
+      <span>价值雷达 · 自动更新于 GitHub Actions</span>
+      <span id="schema-version">研究用途 · 非投资承诺</span>
+    </footer>
+
+    <div id="fatal-error" class="fatal-error" hidden role="alert">
+      <strong>暂时无法读取最新日报</strong>
+      <span>请稍后刷新，或前往 GitHub Actions 查看运行状态。</span>
+    </div>
+  </body>
+</html>
